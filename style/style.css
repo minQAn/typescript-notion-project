@@ -1,0 +1,97 @@
+:root {
+  --bg-main-color: #27b8b8;
+  --bg-menu-color: #2553ea4a;
+  --bg-accent-color: #2195cb;
+  
+  --text-accent-color: #2589da;
+  --text-secondary-color: #fdf8f8;
+  
+  --accent-color: #e4821f;
+  --button-bg-color: #57b98d;
+  
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+li {
+  list-style: none;
+}
+
+body {
+  background: url("../assets/background.jpeg") center/cover no-repeat;
+  height: 100vh;
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  overflow: hidden;
+}
+
+.app {
+  display: flex;
+}
+
+/* -- Menu-left -- */
+.menu {
+  flex: 1 1 20%;  
+  border-right: 1px solid var(--text-secondary-color);
+  height: 100vh;
+  position: sticky;
+  left: 0;
+  top: 0;
+  background-color: var(--bg-menu-color);
+}
+
+.menu .menu__title {
+  font-size: 2rem;
+  width: 100%;
+  color: var(--text-secondary-color);
+  padding: 2rem;
+  margin-top: 2rem;
+  white-space: nowrap;
+}
+
+.menu .control-panel {
+  display: flex;
+  flex-direction: column;  
+  align-items: center;
+}
+
+/* -- each item -- */
+.menu .control-panel li {
+  margin: 10px 0;
+
+}
+
+/* create-button */
+.menu .control-panel li .create-button {
+  outline: none;
+  background-color: var(--button-bg-color);
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: 1rem;
+  color: var(--text-secondary-color);
+  border: none;  
+  text-align: center;
+  white-space: nowrap;
+  width: 10em;
+}
+
+.menu .control-panel li .create-button:hover {
+  background-color: var(--accent-color);
+  transition: 200ms ease-out;
+}
+
+/* -- Container-right -- */ 
+.container {
+  flex: 1 1 80%;
+  height: 100vh;
+  overflow: auto; /* 요소가 넘칠 경우에만 스크롤 바를 보여준다*/
+  /* border: 3px solid ivory; */
+}
+
+
