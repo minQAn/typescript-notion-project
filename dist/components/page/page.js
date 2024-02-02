@@ -5,6 +5,7 @@ export class PageItemSectionComponent extends BaseComponent {
     constructor(sectionName) {
         super(`<section></section>`);
         this.element.classList.add(sectionName);
+        this.element.textContent = sectionName;
     }
 }
 export class PageComponent extends BaseComponent {

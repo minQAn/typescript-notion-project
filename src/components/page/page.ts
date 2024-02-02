@@ -12,13 +12,14 @@ export class PageItemSectionComponent extends BaseComponent<HTMLElement> {
     constructor(sectionName: Menu) {
         super(`<section></section>`);
         this.element.classList.add(sectionName);
+        this.element.textContent = sectionName;
     }
 }
 
 // should be dropable from PageItemSectionComponent
 export class PageComponent extends BaseComponent<HTMLElement> implements Composable{
     constructor() {
-        super(`<div class="page"></div>`);
+        super(`<div class="page"></div>`);        
     }
 
     addItem(sectionName: Menu){
@@ -27,7 +28,6 @@ export class PageComponent extends BaseComponent<HTMLElement> implements Composa
         //     return;
         // }
         const pageItemSection = new PageItemSectionComponent(sectionName);
-        pageItemSection.attachTo(this.element);
-        
+        pageItemSection.attachTo(this.element);                
     }
 }
