@@ -141,8 +141,26 @@ body {
   padding: 0.5em 1em;
 }
 
+.dialog__submit {
+  background-color: var(--text-accent-color);
+  border: none;  
+  border-radius: 5px;
+}
+
 .close { 
-  align-self: flex-end;
+  align-self: flex-end;  
+  border: none;
+}
+
+.dialog__submit:hover,
+.close:hover,
+.close:focus {
+    transform: scale(1.1);
+    color: var(--text-secondary-color);
+    background-color: var(--button-bg-color);
+    text-decoration: none;
+    cursor: pointer;    
+    transition: all 200ms ease-out;    
 }
 
 .dialog__submit {
@@ -152,6 +170,8 @@ body {
 
 .form__container {
   display: flex;
+  align-items: center;  
+  margin: 0.5rem;
 }
 
 .form__container>label {
@@ -159,6 +179,9 @@ body {
   min-width: 3rem; 
 }
 
-.form__container>input {
+.form__container>input,textarea {
   flex: 1;
+  font-size: 1.5rem;  
+  outline: none;
 }
+
