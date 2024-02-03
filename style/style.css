@@ -133,7 +133,8 @@ body {
 }
 
 .dialog__body {
-
+  width: 100%;
+  margin: 1rem;
 }
 
 .close,.dialog__submit {
@@ -149,4 +150,15 @@ body {
   min-width: 100px;
 }
 
+.form__container {
+  display: flex;
+}
 
+.form__container>label {
+  display: inline-block;
+  min-width: 3rem; 
+}
+
+.form__container>input {
+  flex: 1;
+}

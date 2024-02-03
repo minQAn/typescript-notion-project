@@ -60,10 +60,7 @@ class App {
             (input: TextInputComponent) => new TodoComponent(input.title, input.body),
             page
         );
-
-        // this.bindElementToMenu('todo', TextInputComponent, page);
-        
-        // Add PageItemSection by clicking menu                
+                  
     }    
 
     private bindElementToMenu<T extends (MediaData | TextData) & Component>(

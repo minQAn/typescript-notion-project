@@ -48,7 +48,7 @@ export class MenuItemComponent extends BaseComponent<HTMLElement> implements Mut
         this.onClickListener = listener;        
     }
 
-    muteChild(selectedMenu: Menu) {        
+    muteChild(selectedMenu?: Menu) {        
         if(selectedMenu !== this.element.className) {
             this.element.getElementsByClassName('menu-selected').item(0)?.classList.remove('menu-selected');
         }
@@ -117,7 +117,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
     }
 
     // To mute(remove the class name) other menu
-    private updateChildren(selectedMenu: Menu) {
+    private updateChildren(selectedMenu?: Menu) {
         this.children.forEach(menuItem => {
             menuItem.muteChild(selectedMenu);
         });
@@ -125,6 +125,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
 
     private initializeMenu() {
         this.selectedMenu = undefined;
-        this.currentInputDialog = undefined;
+        this.currentInputDialog = undefined; 
+        this.updateChildren();
     }
 }

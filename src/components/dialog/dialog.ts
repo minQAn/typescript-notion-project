@@ -26,7 +26,7 @@ export class DialogComponent extends BaseComponent<HTMLElement> implements Compo
         super(`
             <div class="dialog">
                 <div class="dialog__container">
-                    <form class="dialog__form">                
+                    <form class="dialog__form" autocomplete="off">                
                         <button type="button" class="close">&times;</button>
                         <div class="dialog__body"></div>
                         <button type="submit" class="dialog__submit">ADD</button>

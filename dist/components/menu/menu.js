@@ -68,5 +68,6 @@ export class MenuComponent extends BaseComponent {
     initializeMenu() {
         this.selectedMenu = undefined;
         this.currentInputDialog = undefined;
+        this.updateChildren();
     }
 }
