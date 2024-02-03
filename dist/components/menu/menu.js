@@ -29,9 +29,9 @@ export class MenuComponent extends BaseComponent {
         super(`<ul class="control-panel"></ul>`);
         this.children = new Set;
     }
-    addItem(menu, pageRoot) {
+    addItem(menu, InputConstructor, sectionComponent, parent) {
         const menuItem = new MenuItemComponent(menu);
-        menuItem.attachTo(this.element);
+        menuItem.attachTo(this.element, 'beforeend');
         this.children.add(menuItem);
         menuItem.setOnClickListener(() => {
             if (this.selectedMenu === menu) {
@@ -39,17 +39,24 @@ export class MenuComponent extends BaseComponent {
             }
             ;
             if (this.currentInputDialog) {
-                this.currentInputDialog.removeFrom(pageRoot);
+                this.currentInputDialog.removeFrom(parent);
             }
             this.selectedMenu = menu;
             this.updateChildren(this.selectedMenu);
             const dialog = new DialogComponent();
-            dialog.attachTo(pageRoot);
+            const inputComponent = new InputConstructor();
+            dialog.addChild(inputComponent);
             dialog.setOnCloseListener(() => {
-                this.selectedMenu = undefined;
-                this.currentInputDialog = undefined;
-                dialog.removeFrom(pageRoot);
+                this.initializeMenu();
+                dialog.removeFrom(parent);
             });
+            dialog.setOnSubmitListener(() => {
+                const section = sectionComponent(inputComponent);
+                section.attachTo(parent);
+                this.initializeMenu();
+                dialog.removeFrom(parent);
+            });
+            dialog.attachTo(parent);
             this.currentInputDialog = dialog;
         });
     }
@@ -57,5 +64,9 @@ export class MenuComponent extends BaseComponent {
         this.children.forEach(menuItem => {
             menuItem.muteChild(selectedMenu);
         });
+    }
+    initializeMenu() {
+        this.selectedMenu = undefined;
+        this.currentInputDialog = undefined;
     }
 }

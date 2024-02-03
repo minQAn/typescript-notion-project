@@ -12,16 +12,24 @@ export class DialogComponent extends BaseComponent {
                 </div>                
             </div>
         `);
-        const dialogForm = this.element.querySelector('.dialog__form');
-        dialogForm.addEventListener('submit', (event) => {
-            event.preventDefault();
-        });
         const closeBtn = this.element.querySelector('.close');
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();
         });
+        const submitBtn = this.element.querySelector('.dialog__submit');
+        submitBtn.addEventListener('click', (event) => {
+            event.preventDefault();
+            this.onSubmitListener && this.onSubmitListener();
+        });
     }
     setOnCloseListener(listener) {
         this.onCloseListener = listener;
+    }
+    setOnSubmitListener(listener) {
+        this.onSubmitListener = listener;
+    }
+    addChild(child) {
+        const body = this.element.querySelector('.dialog__body');
+        child.attachTo(body);
     }
 }

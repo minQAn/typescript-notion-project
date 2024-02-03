@@ -1,6 +1,6 @@
 import { Menu } from "../../app.js";
 import { BaseComponent } from "../component.js";
-import { Composable } from "../menu/menu.js";
+import { MenuAddable } from "../menu/menu.js";
 
 // should be dragable to PageItemSectionComponent
 export class PageItemComponent extends BaseComponent<HTMLElement> {
@@ -17,7 +17,7 @@ export class PageItemSectionComponent extends BaseComponent<HTMLElement> {
 }
 
 // should be dropable from PageItemSectionComponent
-export class PageComponent extends BaseComponent<HTMLElement> implements Composable{
+export class PageComponent extends BaseComponent<HTMLElement> implements MenuAddable{
     constructor() {
         super(`<div class="page"></div>`);        
     }

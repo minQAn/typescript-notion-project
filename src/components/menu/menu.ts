@@ -1,12 +1,26 @@
+import { MediaData, TextData } from './../dialog/dialog';
 import { Menu } from "../../app.js";
-import { BaseComponent } from "../component.js";
+import { BaseComponent, Component } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
 
+export type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
+    new(): T;
+}
 
+export type MakeSection<T extends (MediaData | TextData) & Component> = (input: T) => Component;
 type OnClickListener = () => void;
 
 export interface Composable {
-    addItem(menu: Menu, pageRoot?: HTMLElement): void;
+    addChild(child: Component): void;
+}
+
+export interface MenuAddable {
+    addItem<T extends (MediaData | TextData) & Component>(
+        menu: Menu, 
+        inputComponent: InputComponentConstructor<T>, 
+        sectionComponent: MakeSection<T>, 
+        pageRoot: HTMLElement
+    ): void;
 }
 
 export interface Mutable {
@@ -41,7 +55,7 @@ export class MenuItemComponent extends BaseComponent<HTMLElement> implements Mut
     }
 }
 
-export class MenuComponent extends BaseComponent<HTMLElement> implements Composable {
+export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAddable {
     private selectedMenu?: Menu;
     private currentInputDialog?: DialogComponent;
     private children = new Set<MenuItemComponent>;
@@ -50,18 +64,26 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements Composa
         super(`<ul class="control-panel"></ul>`);
     }
     
-    addItem(menu: Menu, pageRoot: HTMLElement) {        
+    addItem<T extends (MediaData | TextData) & Component>(
+        menu: Menu, 
+        InputConstructor: InputComponentConstructor<T>, 
+        sectionComponent: MakeSection<T>, 
+        parent: HTMLElement
+    ) {        
+        // Add Menu Item UI to Menu Box
         const menuItem = new MenuItemComponent(menu);
-        menuItem.attachTo(this.element);
+        menuItem.attachTo(this.element, 'beforeend');
         this.children.add(menuItem);
+
         // When Menu Item is clicked.
-        menuItem.setOnClickListener(() => {                  
+        menuItem.setOnClickListener(() => {  
+            // To prevent getting clicked if the current selected menu is already clicked.             
             if(this.selectedMenu === menu) {                
                 return;
             };
             // To prevent dialog element to be added more than 1.
             if(this.currentInputDialog) {
-                this.currentInputDialog.removeFrom(pageRoot);
+                this.currentInputDialog.removeFrom(parent);
             } 
             // To show which menu is selected otherwise other menu will be unselected.                                               
             this.selectedMenu = menu; 
@@ -69,13 +91,28 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements Composa
 
             // add Dialog section
             const dialog = new DialogComponent();
-            dialog.attachTo(pageRoot);   
+            const inputComponent = new InputConstructor();
+            // Add Input Component inside of Dialog
+            dialog.addChild(inputComponent);
+
             dialog.setOnCloseListener(() => {  
-                this.selectedMenu = undefined;
-                this.currentInputDialog = undefined;                              
-                dialog.removeFrom(pageRoot);
+                this.initializeMenu();                                          
+                dialog.removeFrom(parent);
+            });            
+
+            dialog.setOnSubmitListener(() => {                
+                // create and add Section Component to Page               
+                const section = sectionComponent(inputComponent); // new Component(inputComponent);
+                section.attachTo(parent);
+
+                // initialize and remove Dialog UI from current page
+                this.initializeMenu();
+                dialog.removeFrom(parent);
             });
-            this.currentInputDialog = dialog;                 
+                                            
+            // Add Input Dialog to pageRoot
+            dialog.attachTo(parent);   
+            this.currentInputDialog = dialog;  
         });
     }
 
@@ -83,6 +120,11 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements Composa
     private updateChildren(selectedMenu: Menu) {
         this.children.forEach(menuItem => {
             menuItem.muteChild(selectedMenu);
-        })
+        });
+    }
+
+    private initializeMenu() {
+        this.selectedMenu = undefined;
+        this.currentInputDialog = undefined;
     }
 }

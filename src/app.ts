@@ -1,13 +1,20 @@
-import { Composable, MenuComponent } from './components/menu/menu.js';
+import { MakeSection, MenuAddable, MenuComponent } from './components/menu/menu.js';
 
 import { Component } from "./components/component.js";
 import { PageComponent } from './components/page/page.js';
+import { InputComponentConstructor, MediaData, TextData } from './components/dialog/dialog.js';
+import { MediaInputComponent } from './components/dialog/input/media-input.js';
+import { PhotoComponent } from './components/page/item/photo.js';
+import { YoutubeComponent } from './components/page/item/youtube.js';
+import { TextInputComponent } from './components/dialog/input/text-input.js';
+import { MemoComponent } from './components/page/item/memo.js';
+import { TodoComponent } from './components/page/item/todo.js';
 
 
 export type Menu = 'photo' | 'youtube' | 'memo' | 'todo';
 
 class App {
-    private readonly menuBox: Component & Composable;
+    private readonly menuBox: Component & MenuAddable;
     
     constructor(appRoot: HTMLElement, containerRoot: HTMLElement){
         // Add Menu Box
@@ -17,17 +24,56 @@ class App {
         
         // Add Page        
         const pageComponent = new PageComponent();
-        pageComponent.attachTo(containerRoot);   
-        // Add Menu Items
+        pageComponent.attachTo(containerRoot);  
+
+        // Root of each Item Content
         const page = containerRoot.querySelector('.page')! as HTMLElement;
-        this.menuBox.addItem('photo', page);
-        this.menuBox.addItem('youtube', page);
-        this.menuBox.addItem('memo', page);
-        this.menuBox.addItem('todo', page);
+
+        // Photo Button
+        this.bindElementToMenu<MediaInputComponent>(
+            'photo', 
+            MediaInputComponent, 
+            (input: MediaInputComponent) => new PhotoComponent(input.title, input.url), 
+            page // where to add the created
+        );
+
+        // Youbue Button
+        this.bindElementToMenu<MediaInputComponent>(
+            'youtube',
+            MediaInputComponent,
+            (input: MediaInputComponent) => new YoutubeComponent(input.title, input.url),
+            page
+        );
+
+        // Memo Button
+        this.bindElementToMenu<TextInputComponent>(
+            'memo',
+            TextInputComponent,
+            (input: TextInputComponent) => new MemoComponent(input.title, input.body),
+            page
+        );
         
-        // Add PageItemSection by clicking menu        
+        // Todo Button
+        this.bindElementToMenu<TextInputComponent>(
+            'todo',
+            TextInputComponent,
+            (input: TextInputComponent) => new TodoComponent(input.title, input.body),
+            page
+        );
+
+        // this.bindElementToMenu('todo', TextInputComponent, page);
         
+        // Add PageItemSection by clicking menu                
     }    
+
+    private bindElementToMenu<T extends (MediaData | TextData) & Component>(
+        menu: Menu,
+        InputConstructor: InputComponentConstructor<T>,
+        makeSection: MakeSection<T>,
+        parent: HTMLElement
+    ) {      
+        this.menuBox.addItem(menu, InputConstructor, makeSection, parent); // add menu item
+    }
 }
 
 new App(document.querySelector('.app')! as HTMLElement, document.querySelector('.container')! as HTMLElement);
