@@ -4,7 +4,7 @@ import { BaseComponent, Component } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
 
 export type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
-    new(): T;
+    new(menu?: Menu): T;
 }
 
 export type MakeSection<T extends (MediaData | TextData) & Component> = (input: T) => Component;
@@ -91,7 +91,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
 
             // add Dialog section
             const dialog = new DialogComponent();
-            const inputComponent = new InputConstructor();
+            const inputComponent = new InputConstructor(menu);
             // Add Input Component inside of Dialog
             dialog.addChild(inputComponent);
 
@@ -109,7 +109,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
-                                            
+
             // Add Input Dialog to pageRoot
             dialog.attachTo(parent);   
             this.currentInputDialog = dialog;  

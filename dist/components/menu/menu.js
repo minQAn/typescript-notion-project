@@ -44,7 +44,7 @@ export class MenuComponent extends BaseComponent {
             this.selectedMenu = menu;
             this.updateChildren(this.selectedMenu);
             const dialog = new DialogComponent();
-            const inputComponent = new InputConstructor();
+            const inputComponent = new InputConstructor(menu);
             dialog.addChild(inputComponent);
             dialog.setOnCloseListener(() => {
                 this.initializeMenu();

@@ -1,6 +1,6 @@
 import { BaseComponent } from "../../component.js";
 export class TextInputComponent extends BaseComponent {
-    constructor() {
+    constructor(menu) {
         super(`            
             <div>
                 <div class="form__container">
@@ -13,6 +13,18 @@ export class TextInputComponent extends BaseComponent {
                 </div>
             </div>            
         `);
+        this.memoPlaceholder = {
+            title: "메모 제목을 입력해주세요.",
+            body: "메모 내용..",
+        };
+        this.todoPlaceholder = {
+            title: "오늘 할일의 제목을 입력해주세요.",
+            body: "오늘 할일 내용..",
+        };
+        const title = this.element.querySelector('#title');
+        title.placeholder = menu === 'memo' ? this.memoPlaceholder.title : menu === 'todo' ? this.todoPlaceholder.title : "";
+        const body = this.element.querySelector('#body');
+        body.placeholder = menu === 'memo' ? this.memoPlaceholder.body : menu === 'todo' ? this.todoPlaceholder.body : "";
     }
     get title() {
         const titleInput = this.element.querySelector('#title');

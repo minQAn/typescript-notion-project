@@ -60,7 +60,7 @@ class App {
             (input: TextInputComponent) => new TodoComponent(input.title, input.body),
             page
         );
-                  
+
     }    
 
     private bindElementToMenu<T extends (MediaData | TextData) & Component>(

@@ -1,8 +1,18 @@
 import { TextData } from './../dialog.js';
 import { BaseComponent } from "../../component.js";
+import { Menu } from '../../../app.js';
 
 export class TextInputComponent extends BaseComponent<HTMLElement> implements TextData {
-    constructor(){
+    private readonly memoPlaceholder: TextData = {
+        title: "메모 제목을 입력해주세요.",
+        body: "메모 내용..", 
+    }    
+    private readonly todoPlaceholder: TextData = {
+        title: "오늘 할일의 제목을 입력해주세요.",
+        body: "오늘 할일 내용..", 
+    } 
+
+    constructor(menu?: Menu){
         super(`            
             <div>
                 <div class="form__container">
@@ -15,6 +25,12 @@ export class TextInputComponent extends BaseComponent<HTMLElement> implements Te
                 </div>
             </div>            
         `);        
+
+        const title = this.element.querySelector('#title')! as HTMLInputElement;
+        title.placeholder = menu === 'memo' ? this.memoPlaceholder.title : menu === 'todo' ? this.todoPlaceholder.title : "";   
+
+        const body = this.element.querySelector('#body')! as HTMLInputElement;
+        body.placeholder = menu === 'memo' ? this.memoPlaceholder.body : menu === 'todo' ? this.todoPlaceholder.body : "";   
     }
 
     get title(): string {
