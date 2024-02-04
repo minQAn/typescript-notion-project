@@ -2,6 +2,7 @@ import { MediaData, TextData } from './../dialog/dialog';
 import { Menu } from "../../app.js";
 import { BaseComponent, Component } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
+import { PageItemComponent, PageItemSectionComponent } from '../page/page.js';
 
 export type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
     new(menu?: Menu): T;
@@ -35,8 +36,7 @@ export class MenuItemComponent extends BaseComponent<HTMLElement> implements Mut
             <li><button class="create-button"></button></li>
         `);
 
-        const createBtn = this.element.querySelector('.create-button')! as HTMLButtonElement;
-        createBtn.id = id;
+        const createBtn = this.element.querySelector('.create-button')! as HTMLButtonElement;        
         createBtn.textContent = id; // Text is changed to uppercase from css.        
         createBtn.addEventListener('click', () => {
             this.onClickListener && this.onClickListener();
@@ -101,10 +101,28 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
             });            
 
             dialog.setOnSubmitListener(() => {                
-                // create and add Section Component to Page               
-                const section = sectionComponent(inputComponent); // new Component(inputComponent);
-                section.attachTo(parent);
+                // Only when there is no same section menu 
+                if(!this.checkDuplicate(parent, menu)) {
+                    const pageItemSection = new PageItemSectionComponent(menu);
+                    pageItemSection.attachTo(parent, 'beforeend');                    
+                }                  
+            
+            // create and add Section Component to Page  
+                const pageItemComponent = new PageItemComponent();
+                const itemComponent = sectionComponent(inputComponent); // new Component(inputComponent);                                
+                pageItemComponent.addChild(itemComponent);                
+                
+                const section = parent.querySelector(`.${menu}__box`)! as HTMLElement; // UL Box
+                pageItemComponent.attachTo(section);
 
+                pageItemComponent.setOnCloseListener(() => {     
+                    pageItemComponent.removeFrom(section);   
+                    // remove the page item section if there is nothing
+                    if(section.childElementCount === 0) {                           
+                        parent.removeChild(parent.querySelector(`#${menu}`)! as HTMLElement);                                                              
+                    }                                                         
+                })
+                
                 // initialize and remove Dialog UI from current page
                 this.initializeMenu();
                 dialog.removeFrom(parent);
@@ -127,5 +145,9 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
         this.selectedMenu = undefined;
         this.currentInputDialog = undefined; 
         this.updateChildren();
+    }
+
+    private checkDuplicate(parent: HTMLElement, id: string): Boolean {
+        return parent.querySelector(`#${id}`)? true : false;        
     }
 }

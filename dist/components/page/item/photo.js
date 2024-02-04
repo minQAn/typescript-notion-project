@@ -2,7 +2,7 @@ import { BaseComponent } from "../../component.js";
 export class PhotoComponent extends BaseComponent {
     constructor(title, url) {
         super(`
-            <section class="photo">
+            <section class="photo__section">
                 <div class="photo__holder">
                     <img class="photo__thumbnail">
                 </div>

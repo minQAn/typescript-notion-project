@@ -3,9 +3,9 @@ import { BaseComponent } from "../../component.js";
 export class MemoComponent extends BaseComponent<HTMLElement> {
     constructor(title: string, body: string) {
         super(`
-            <section class="memo">                    
+            <section class="memo__section">                    
                 <h2 class="section-item__title memo__title"></h2>
-                <p class="memo__body"></p>                    
+                <p class="memo__body"></p>                                   
             </section>
         `);
 

@@ -1,12 +1,12 @@
 import { BaseComponent } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
+import { PageItemComponent, PageItemSectionComponent } from '../page/page.js';
 export class MenuItemComponent extends BaseComponent {
     constructor(id) {
         super(`
             <li><button class="create-button"></button></li>
         `);
         const createBtn = this.element.querySelector('.create-button');
-        createBtn.id = id;
         createBtn.textContent = id;
         createBtn.addEventListener('click', () => {
             var _a;
@@ -51,8 +51,21 @@ export class MenuComponent extends BaseComponent {
                 dialog.removeFrom(parent);
             });
             dialog.setOnSubmitListener(() => {
-                const section = sectionComponent(inputComponent);
-                section.attachTo(parent);
+                if (!this.checkDuplicate(parent, menu)) {
+                    const pageItemSection = new PageItemSectionComponent(menu);
+                    pageItemSection.attachTo(parent, 'beforeend');
+                }
+                const pageItemComponent = new PageItemComponent();
+                const itemComponent = sectionComponent(inputComponent);
+                pageItemComponent.addChild(itemComponent);
+                const section = parent.querySelector(`.${menu}__box`);
+                pageItemComponent.attachTo(section);
+                pageItemComponent.setOnCloseListener(() => {
+                    pageItemComponent.removeFrom(section);
+                    if (section.childElementCount === 0) {
+                        parent.removeChild(parent.querySelector(`#${menu}`));
+                    }
+                });
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
@@ -69,5 +82,8 @@ export class MenuComponent extends BaseComponent {
         this.selectedMenu = undefined;
         this.currentInputDialog = undefined;
         this.updateChildren();
+    }
+    checkDuplicate(parent, id) {
+        return parent.querySelector(`#${id}`) ? true : false;
     }
 }

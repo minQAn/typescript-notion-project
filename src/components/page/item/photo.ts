@@ -3,7 +3,7 @@ import { BaseComponent } from "../../component.js";
 export class PhotoComponent extends BaseComponent<HTMLElement> {
     constructor(title: string, url: string) {
         super(`
-            <section class="photo">
+            <section class="photo__section">
                 <div class="photo__holder">
                     <img class="photo__thumbnail">
                 </div>

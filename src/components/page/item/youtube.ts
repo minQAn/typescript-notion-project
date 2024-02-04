@@ -3,7 +3,7 @@ import { BaseComponent } from "../../component.js";
 export class YoutubeComponent extends BaseComponent<HTMLElement> {
     constructor(title: string, url: string) {
         super(`
-            <section class="youtube">
+            <section class="youtube__section">
                 <div class="youtube__player">
                     <iframe class="youtube__iframe"></iframe>
                 </div>

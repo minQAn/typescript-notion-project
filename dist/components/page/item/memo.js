@@ -2,9 +2,9 @@ import { BaseComponent } from "../../component.js";
 export class MemoComponent extends BaseComponent {
     constructor(title, body) {
         super(`
-            <section class="memo">                    
+            <section class="memo__section">                    
                 <h2 class="section-item__title memo__title"></h2>
-                <p class="memo__body"></p>                    
+                <p class="memo__body"></p>                                   
             </section>
         `);
         const titleElement = this.element.querySelector('.memo__title');
