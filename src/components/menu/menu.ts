@@ -77,6 +77,9 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
 
         // When Menu Item is clicked.
         menuItem.setOnClickListener(() => {  
+            // To make sure to show only dialog input
+            const container = document.querySelector('.container')! as HTMLElement;
+            container.style.overflow = 'hidden';
             // To prevent getting clicked if the current selected menu is already clicked.             
             if(this.selectedMenu === menu) {                
                 return;
@@ -96,11 +99,15 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
             dialog.addChild(inputComponent);
 
             dialog.setOnCloseListener(() => {  
+                container.style.overflow = 'auto';
+
                 this.initializeMenu();                                          
                 dialog.removeFrom(parent);
             });            
 
-            dialog.setOnSubmitListener(() => {                
+            dialog.setOnSubmitListener(() => {   
+                container.style.overflow = 'auto';            
+
                 // Only when there is no same section menu 
                 if(!this.checkDuplicate(parent, menu)) {
                     const pageItemSection = new PageItemSectionComponent(menu);
@@ -113,7 +120,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
                 pageItemComponent.addChild(itemComponent);                
                 
                 const section = parent.querySelector(`.${menu}__box`)! as HTMLElement; // UL Box
-                pageItemComponent.attachTo(section);
+                pageItemComponent.attachTo(section, 'beforeend');
 
                 pageItemComponent.setOnCloseListener(() => {     
                     pageItemComponent.removeFrom(section);   

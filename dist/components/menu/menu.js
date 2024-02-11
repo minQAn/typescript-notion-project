@@ -34,6 +34,8 @@ export class MenuComponent extends BaseComponent {
         menuItem.attachTo(this.element, 'beforeend');
         this.children.add(menuItem);
         menuItem.setOnClickListener(() => {
+            const container = document.querySelector('.container');
+            container.style.overflow = 'hidden';
             if (this.selectedMenu === menu) {
                 return;
             }
@@ -47,10 +49,12 @@ export class MenuComponent extends BaseComponent {
             const inputComponent = new InputConstructor(menu);
             dialog.addChild(inputComponent);
             dialog.setOnCloseListener(() => {
+                container.style.overflow = 'auto';
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
             dialog.setOnSubmitListener(() => {
+                container.style.overflow = 'auto';
                 if (!this.checkDuplicate(parent, menu)) {
                     const pageItemSection = new PageItemSectionComponent(menu);
                     pageItemSection.attachTo(parent, 'beforeend');
@@ -59,7 +63,7 @@ export class MenuComponent extends BaseComponent {
                 const itemComponent = sectionComponent(inputComponent);
                 pageItemComponent.addChild(itemComponent);
                 const section = parent.querySelector(`.${menu}__box`);
-                pageItemComponent.attachTo(section);
+                pageItemComponent.attachTo(section, 'beforeend');
                 pageItemComponent.setOnCloseListener(() => {
                     pageItemComponent.removeFrom(section);
                     if (section.childElementCount === 0) {

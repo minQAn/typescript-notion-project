@@ -9,11 +9,11 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Com
     private onCloseListener?: OnCloseListener;
     constructor() {
         super(`
-            <li draggable="true" class="page-item">                
-                <section class="page__body"></section>                
+            <li draggable="true" class="page-item">    
                 <div class="page-item__controls">
                     <button class="close">&times;</button>
-                </div>
+                </div>            
+                <section class="page__body"></section>                                
             </li>
         `);                        
 
@@ -38,9 +38,12 @@ export class PageItemSectionComponent extends BaseComponent<HTMLElement> {
     constructor(sectionName: Menu) {
         super(`
             <section class="page-section">
+                <h2 class="page-section-title"></h2>
                 <ul></ul>
             </section>
         `);
+        const pageSectionTitle = this.element.querySelector('.page-section-title')! as HTMLHeadingElement;
+        pageSectionTitle.textContent = sectionName.toUpperCase();
         this.element.id = sectionName;        
         const sectionUlBox = this.element.querySelector('ul')! as HTMLUListElement;
         sectionUlBox.classList.add(`${sectionName}__box`);          
