@@ -2,7 +2,7 @@ import { MediaData, TextData } from './../dialog/dialog';
 import { Menu } from "../../app.js";
 import { BaseComponent, Component } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
-import { PageItemComponent, PageItemSectionComponent } from '../page/page.js';
+import { PageItemBoxComponent, PageItemComponent, PageSectionComponent } from '../page/page.js';
 
 export type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
     new(menu?: Menu): T;
@@ -109,26 +109,15 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
                 container.style.overflow = 'auto';            
 
                 // Only when there is no same section menu 
-                if(!this.checkDuplicate(parent, menu)) {
-                    const pageItemSection = new PageItemSectionComponent(menu);
-                    pageItemSection.attachTo(parent, 'beforeend');                    
-                }                  
-            
-            // create and add Section Component to Page  
-                const pageItemComponent = new PageItemComponent();
-                const itemComponent = sectionComponent(inputComponent); // new Component(inputComponent);                                
-                pageItemComponent.addChild(itemComponent);                
+                if(!this.checkSectionDuplicated(parent, menu)) {
+                    const pageSectionComponent = new PageSectionComponent(menu);
+                    pageSectionComponent.addBoxByMenu(menu, PageItemComponent);                                                                                                                           
+                    pageSectionComponent.attachTo(parent, 'beforeend');     
+                }                                                  
                 
-                const section = parent.querySelector(`.${menu}__box`)! as HTMLElement; // UL Box
-                pageItemComponent.attachTo(section, 'beforeend');
-
-                pageItemComponent.setOnCloseListener(() => {     
-                    pageItemComponent.removeFrom(section);   
-                    // remove the page item section if there is nothing
-                    if(section.childElementCount === 0) {                           
-                        parent.removeChild(parent.querySelector(`#${menu}`)! as HTMLElement);                                                              
-                    }                                                         
-                })
+                // TODo 02/12 
+                const itemComponent = sectionComponent(inputComponent); // new Component(inputComponent);                                
+                
                 
                 // initialize and remove Dialog UI from current page
                 this.initializeMenu();
@@ -154,7 +143,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
         this.updateChildren();
     }
 
-    private checkDuplicate(parent: HTMLElement, id: string): Boolean {
+    private checkSectionDuplicated(parent: HTMLElement, id: string): Boolean {
         return parent.querySelector(`#${id}`)? true : false;        
     }
 }

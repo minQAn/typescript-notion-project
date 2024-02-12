@@ -1,6 +1,6 @@
 import { BaseComponent } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
-import { PageItemComponent, PageItemSectionComponent } from '../page/page.js';
+import { PageItemComponent, PageSectionComponent } from '../page/page.js';
 export class MenuItemComponent extends BaseComponent {
     constructor(id) {
         super(`
@@ -55,21 +55,14 @@ export class MenuComponent extends BaseComponent {
             });
             dialog.setOnSubmitListener(() => {
                 container.style.overflow = 'auto';
-                if (!this.checkDuplicate(parent, menu)) {
-                    const pageItemSection = new PageItemSectionComponent(menu);
-                    pageItemSection.attachTo(parent, 'beforeend');
+                if (!this.checkSectionDuplicated(parent, menu)) {
+                    const pageSectionComponent = new PageSectionComponent(menu);
+                    pageSectionComponent.addBoxByMenu(menu, PageItemComponent);
+                    pageSectionComponent.attachTo(parent, 'beforeend');
                 }
-                const pageItemComponent = new PageItemComponent();
+                const ulBox = parent.querySelector(`.${menu}__box`);
                 const itemComponent = sectionComponent(inputComponent);
-                pageItemComponent.addChild(itemComponent);
-                const section = parent.querySelector(`.${menu}__box`);
-                pageItemComponent.attachTo(section, 'beforeend');
-                pageItemComponent.setOnCloseListener(() => {
-                    pageItemComponent.removeFrom(section);
-                    if (section.childElementCount === 0) {
-                        parent.removeChild(parent.querySelector(`#${menu}`));
-                    }
-                });
+                ulBox.addChild(itemComponent);
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
@@ -87,7 +80,7 @@ export class MenuComponent extends BaseComponent {
         this.currentInputDialog = undefined;
         this.updateChildren();
     }
-    checkDuplicate(parent, id) {
+    checkSectionDuplicated(parent, id) {
         return parent.querySelector(`#${id}`) ? true : false;
     }
 }

@@ -6,7 +6,7 @@ export class YoutubeComponent extends BaseComponent {
                 <div class="youtube__player">
                     <iframe class="youtube__iframe"></iframe>
                 </div>
-                <h3 class="section-item__title youtube__title"></h3>
+                <h2 class="section-item__title youtube__title"></h2>
             </section>
         `);
         const titleElement = this.element.querySelector('.youtube__title');
