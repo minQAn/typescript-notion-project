@@ -111,12 +111,6 @@ body {
   /* box-sizing: border-box; */
 }
 
-/* > 자식 요소로 .page-section이 있어야하며 1개만 있는 경우, 자식요소로 2개까지 있는 경우 */
-.page:has(>.page-section:only-child),
-.page:has(>.page-section.page-section:first-child:nth-last-child(2)){
-  justify-content: center;
-}
-
 /* page-section */
 .page-section {  
   background-color: var(--bg-soft-color); 
@@ -131,14 +125,20 @@ body {
   margin-right: 1rem;
 }
 
+/* > 자식 요소로 .page-section이 있어야하며 1개만 있는 경우, 자식요소로 2개까지 있는 경우 */
+.page:has(>.page-section:only-of-type),
+.page:has(>.page-section:first-of-type:nth-of-type(2)){
+  justify-content: center;
+}
+
 /* when the page section exists only one */
-.page-section:only-child {
+.page-section:only-of-type {
   flex: 0 0 60%;
 }
 
 /* 자식요소 2개 있는 경우 크기가 너무 커서 별도로 줄임 */
-.page-section:first-child:nth-last-child(2),
-.page-section:first-child:nth-last-child(2)~.page-section{
+.page-section:first-of-type:nth-of-type(2),
+.page-section:first-of-type:nth-of-type(2)~.page-section{
   flex: 0 0 calc(50% - 100px);
 }
 
@@ -260,7 +260,7 @@ body {
   width: 100%;
   height: 100%;
   z-index: 1;  
-  background-color: #393a3a;
+  background-color: #4344448f;
   overflow: hidden;
 }
 
