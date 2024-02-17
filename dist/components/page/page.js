@@ -29,15 +29,15 @@ export class PageItemBoxComponent extends BaseComponent {
         this.pageItemContainer = pageItemContainer;
         this.element.classList.add(`${this.menu}__box`);
     }
-    addChild(inputComponent) {
+    addChild(section) {
         const pageItemComponent = new this.pageItemContainer();
-        pageItemComponent.addChild(inputComponent);
+        pageItemComponent.addChild(section);
         pageItemComponent.attachTo(this.element, 'beforeend');
         pageItemComponent.setOnCloseListener(() => {
             var _a;
             pageItemComponent.removeFrom(this.element);
             if (this.element.childElementCount === 0 && ((_a = this.element.parentElement) === null || _a === void 0 ? void 0 : _a.id) === this.menu) {
-                console.log(this.element.parentElement);
+                this.element.parentElement.remove();
             }
         });
     }
@@ -49,19 +49,23 @@ export class PageSectionComponent extends BaseComponent {
                 <h2 class="page-section-title"></h2>
             </section>
         `);
+        this.menu = menu;
         const pageSectionTitle = this.element.querySelector('.page-section-title');
-        pageSectionTitle.textContent = menu.toUpperCase();
-        this.element.id = menu;
+        pageSectionTitle.textContent = this.menu.toUpperCase();
+        this.element.id = this.menu;
     }
-    addBoxByMenu(menu, itemConstructor) {
-        if (this.checkUlBoxDuplicated(menu)) {
+    addItemWithBoxByMenu(menu, itemConstructor, section) {
+        if (this.pageUlBox) {
+            this.pageUlBox.addChild(section);
             return;
         }
         const itemUlBox = new PageItemBoxComponent(menu, itemConstructor);
+        this.pageUlBox = itemUlBox;
         itemUlBox.attachTo(this.element, 'beforeend');
+        itemUlBox.addChild(section);
     }
-    checkUlBoxDuplicated(menu) {
-        return this.element.querySelector(`.${menu}__box`) ? true : false;
+    get id() {
+        return this.element.id;
     }
 }
 export class PageComponent extends BaseComponent {

@@ -3,17 +3,17 @@ import { BaseComponent, Component } from "../component.js";
 import { Composable } from "../menu/menu.js";
 
 type OnCloseListener = () => void;
-type PageItemContainerConstructor = {
+export type PageItemContainerConstructor = {
     new(): PageItemContainer;
 }
 
 interface ComposableByMenu {
-    addBoxByMenu<T extends PageItemContainerConstructor>(menu: Menu, itemConstructor: T): void;       
+    addItemWithBoxByMenu<T extends PageItemContainerConstructor>(menu: Menu, itemConstructor: T, item: Component): void;       
 }
 
 interface PageItemContainer extends Component, Composable {
     setOnCloseListener(listener: OnCloseListener): void;
-    
+
 }
 
 // should be dragable to PageItemSectionComponent
@@ -54,18 +54,17 @@ export class PageItemBoxComponent extends BaseComponent<HTMLElement> implements 
         this.element.classList.add(`${this.menu}__box`);          
     }    
     
-    addChild(inputComponent: Component) {
+    addChild(section: Component) {
         const pageItemComponent = new this.pageItemContainer();
-        pageItemComponent.addChild(inputComponent); // new Component(inputComponent);           
+        pageItemComponent.addChild(section); // new Component(inputComponent);           
         pageItemComponent.attachTo(this.element, 'beforeend'); // add to UL Box
-
+        
         pageItemComponent.setOnCloseListener(() => {
             pageItemComponent.removeFrom(this.element);
 
             // remove the page item section if there is nothing
-            if(this.element.childElementCount === 0 && this.element.parentElement?.id === this.menu) {
-                // TODO
-                console.log(this.element.parentElement);
+            if(this.element.childElementCount === 0 && this.element.parentElement?.id === this.menu) {                
+                this.element.parentElement.remove();
             }              
         });
 
@@ -73,6 +72,8 @@ export class PageItemBoxComponent extends BaseComponent<HTMLElement> implements 
 }
 
 export class PageSectionComponent extends BaseComponent<HTMLElement> implements ComposableByMenu {
+    private pageUlBox?: PageItemBoxComponent;
+
     constructor(private menu: Menu) {
         super(`
             <section class="page-section">
@@ -82,20 +83,31 @@ export class PageSectionComponent extends BaseComponent<HTMLElement> implements 
         
         const pageSectionTitle = this.element.querySelector('.page-section-title')! as HTMLHeadingElement;
         pageSectionTitle.textContent = this.menu.toUpperCase();
-        this.element.id = this.menu;        
+        this.element.id = this.menu;              
     }
 
-    addBoxByMenu<T extends PageItemContainerConstructor>(menu: Menu, itemConstructor: T) {        
-        if(this.checkUlBoxDuplicated(menu)) {
-            return;              
-        }                  
-        const itemUlBox = new PageItemBoxComponent(menu, itemConstructor);
-        itemUlBox.attachTo(this.element, 'beforeend');        
+    addItemWithBoxByMenu<T extends PageItemContainerConstructor>(
+        menu: Menu, 
+        itemConstructor: T, 
+        section: Component, 
+    ) {                              
+        // When Ul box already exists
+        if(this.pageUlBox) {                                    
+            this.pageUlBox.addChild(section);
+            return;
+        }
+
+        const itemUlBox = new PageItemBoxComponent(menu, itemConstructor);                        
+        this.pageUlBox = itemUlBox;        
+        
+        itemUlBox.attachTo(this.element, 'beforeend');              
+        itemUlBox.addChild(section);
     }
 
-    private checkUlBoxDuplicated(menu: Menu) {    
-        return this.element.querySelector(`.${menu}__box`)! as HTMLUListElement || undefined;
+    get id(): string {
+        return this.element.id;
     }
+    
 }
 
 // should be dropable from PageItemSectionComponent

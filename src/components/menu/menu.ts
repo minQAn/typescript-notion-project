@@ -1,8 +1,8 @@
-import { MediaData, TextData } from './../dialog/dialog';
+import { MediaData, TextData } from './../dialog/dialog.js';
 import { Menu } from "../../app.js";
 import { BaseComponent, Component } from "../component.js";
 import { DialogComponent } from "../dialog/dialog.js";
-import { PageItemBoxComponent, PageItemComponent, PageSectionComponent } from '../page/page.js';
+import { PageItemComponent, PageSectionComponent } from '../page/page.js';
 
 export type InputComponentConstructor<T extends (MediaData | TextData) & Component> = {
     new(menu?: Menu): T;
@@ -59,6 +59,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
     private selectedMenu?: Menu;
     private currentInputDialog?: DialogComponent;
     private children = new Set<MenuItemComponent>;
+    private pageSectionComponents: PageSectionComponent[] = []; 
 
     constructor() {
         super(`<ul class="control-panel"></ul>`);
@@ -109,15 +110,26 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
                 container.style.overflow = 'auto';            
 
                 // Only when there is no same section menu 
-                if(!this.checkSectionDuplicated(parent, menu)) {
+                if(!this.checkSectionDuplicated(menu)) {
                     const pageSectionComponent = new PageSectionComponent(menu);
-                    pageSectionComponent.addBoxByMenu(menu, PageItemComponent);                                                                                                                           
-                    pageSectionComponent.attachTo(parent, 'beforeend');     
-                }                                                  
-                
-                // TODo 02/12 
-                const itemComponent = sectionComponent(inputComponent); // new Component(inputComponent);                                
-                
+                    const section = sectionComponent(inputComponent); // new Component(inputComponent);                                
+                    
+                    this.pageSectionComponents.push(pageSectionComponent);                                   
+                    
+                    pageSectionComponent.addItemWithBoxByMenu(menu, PageItemComponent, section);                                                                                                                           
+                    pageSectionComponent.attachTo(parent, 'beforeend'); 
+                                    
+                } else {           
+                    // when there already same section exists                                      
+                    const section = sectionComponent(inputComponent); // new Component(inputComponent);                                
+                    
+                    const currentSection = this.pageSectionComponents.find(section => {
+                        if(section.id === menu) {
+                            return section;
+                        };
+                    })! as PageSectionComponent;            
+                    currentSection.addItemWithBoxByMenu(menu, PageItemComponent, section);
+                }                                                                                                                             
                 
                 // initialize and remove Dialog UI from current page
                 this.initializeMenu();
@@ -143,7 +155,13 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
         this.updateChildren();
     }
 
-    private checkSectionDuplicated(parent: HTMLElement, id: string): Boolean {
-        return parent.querySelector(`#${id}`)? true : false;        
+    private checkSectionDuplicated(id: Menu): Boolean {                                            
+        const checked = this.pageSectionComponents.find(section => {
+            if(section.id === id) {
+                return true;
+            }            
+        });
+        
+        return checked !== undefined ? true : false;
     }
 }

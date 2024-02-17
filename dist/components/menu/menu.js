@@ -28,6 +28,7 @@ export class MenuComponent extends BaseComponent {
     constructor() {
         super(`<ul class="control-panel"></ul>`);
         this.children = new Set;
+        this.pageSectionComponents = [];
     }
     addItem(menu, InputConstructor, sectionComponent, parent) {
         const menuItem = new MenuItemComponent(menu);
@@ -55,14 +56,23 @@ export class MenuComponent extends BaseComponent {
             });
             dialog.setOnSubmitListener(() => {
                 container.style.overflow = 'auto';
-                if (!this.checkSectionDuplicated(parent, menu)) {
+                if (!this.checkSectionDuplicated(menu)) {
                     const pageSectionComponent = new PageSectionComponent(menu);
-                    pageSectionComponent.addBoxByMenu(menu, PageItemComponent);
+                    const section = sectionComponent(inputComponent);
+                    this.pageSectionComponents.push(pageSectionComponent);
+                    pageSectionComponent.addItemWithBoxByMenu(menu, PageItemComponent, section);
                     pageSectionComponent.attachTo(parent, 'beforeend');
                 }
-                const ulBox = parent.querySelector(`.${menu}__box`);
-                const itemComponent = sectionComponent(inputComponent);
-                ulBox.addChild(itemComponent);
+                else {
+                    const section = sectionComponent(inputComponent);
+                    const currentSection = this.pageSectionComponents.find(section => {
+                        if (section.id === menu) {
+                            return section;
+                        }
+                        ;
+                    });
+                    currentSection.addItemWithBoxByMenu(menu, PageItemComponent, section);
+                }
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
@@ -80,7 +90,12 @@ export class MenuComponent extends BaseComponent {
         this.currentInputDialog = undefined;
         this.updateChildren();
     }
-    checkSectionDuplicated(parent, id) {
-        return parent.querySelector(`#${id}`) ? true : false;
+    checkSectionDuplicated(id) {
+        const checked = this.pageSectionComponents.find(section => {
+            if (section.id === id) {
+                return true;
+            }
+        });
+        return checked !== undefined ? true : false;
     }
 }
