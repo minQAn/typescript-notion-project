@@ -3,6 +3,7 @@ import { BaseComponent, Component } from "../component.js";
 import { Composable } from "../menu/menu.js";
 
 type OnCloseListener = () => void;
+
 export type PageItemContainerConstructor = {
     new(): PageItemContainer;
 }
@@ -13,12 +14,11 @@ interface ComposableByMenu {
 
 interface PageItemContainer extends Component, Composable {
     setOnCloseListener(listener: OnCloseListener): void;
-
 }
 
 // should be dragable to PageItemSectionComponent
 export class PageItemComponent extends BaseComponent<HTMLElement> implements PageItemContainer{
-    private onCloseListener?: OnCloseListener;
+    private onCloseListener?: OnCloseListener;    
     constructor() {
         super(`
             <li draggable="true" class="page-item">    
@@ -32,8 +32,8 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
         const closeBtn = this.element.querySelector('.close')! as HTMLButtonElement;
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();
-        });
-    }
+        });        
+    }   
 
     setOnCloseListener(listener: OnCloseListener) {
         this.onCloseListener = listener;
@@ -60,12 +60,12 @@ export class PageItemBoxComponent extends BaseComponent<HTMLElement> implements 
         pageItemComponent.attachTo(this.element, 'beforeend'); // add to UL Box
         
         pageItemComponent.setOnCloseListener(() => {
-            pageItemComponent.removeFrom(this.element);
+            pageItemComponent.removeFrom(this.element); // remove item in ul box
 
             // remove the page item section if there is nothing
-            if(this.element.childElementCount === 0 && this.element.parentElement?.id === this.menu) {                
-                this.element.parentElement.remove();
-            }              
+            if(this.element.childElementCount === 0 && this.element.parentElement?.id === this.menu) {                                                
+                this.element.parentElement.remove(); // remove ul box                        
+            }             
         });
 
     }

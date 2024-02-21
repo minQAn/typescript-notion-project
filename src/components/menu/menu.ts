@@ -104,18 +104,21 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
 
                 this.initializeMenu();                                          
                 dialog.removeFrom(parent);
-            });            
-
+            });   
+            
+            // Renew everytime
+            this.renewSections(parent);            
+            
             dialog.setOnSubmitListener(() => {   
-                container.style.overflow = 'auto';            
+                container.style.overflow = 'auto';                                     
 
                 // Only when there is no same section menu 
                 if(!this.checkSectionDuplicated(menu)) {
                     const pageSectionComponent = new PageSectionComponent(menu);
                     const section = sectionComponent(inputComponent); // new Component(inputComponent);                                
-                    
+                                
                     this.pageSectionComponents.push(pageSectionComponent);                                   
-                    
+                                        
                     pageSectionComponent.addItemWithBoxByMenu(menu, PageItemComponent, section);                                                                                                                           
                     pageSectionComponent.attachTo(parent, 'beforeend'); 
                                     
@@ -129,13 +132,13 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
                         };
                     })! as PageSectionComponent;            
                     currentSection.addItemWithBoxByMenu(menu, PageItemComponent, section);
-                }                                                                                                                             
-                
+                }                                                                                                                                                             
+
                 // initialize and remove Dialog UI from current page
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
-
+                        
             // Add Input Dialog to pageRoot
             dialog.attachTo(parent);   
             this.currentInputDialog = dialog;  
@@ -156,12 +159,31 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
     }
 
     private checkSectionDuplicated(id: Menu): Boolean {                                            
-        const checked = this.pageSectionComponents.find(section => {
-            if(section.id === id) {
-                return true;
-            }            
-        });
+        const checked = this.pageSectionComponents.find(section => 
+            section.id === id
+        );
         
         return checked !== undefined ? true : false;
     }
+
+    public renewSections(parent: HTMLElement) {              
+        let filtered: PageSectionComponent[] = [];        
+        
+        if(!parent.children) {
+            return new Error(`${parent} element doesn't have children`);
+        }
+        const children = parent.children! as HTMLCollection;
+        
+        // Object는 find, map, filter같은 어레이 프로토콜이 없음으로 for문으로 돌림.
+        for(let section of children) {                                                          
+            let foundSection = this.pageSectionComponents.find(item => item.id === section.id);
+            if(!foundSection) { // to make sure for undefined when there is no same section
+                return;
+            }
+            filtered.push(foundSection);
+        }
+        
+        this.pageSectionComponents = filtered;
+    }
+    
 }

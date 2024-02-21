@@ -54,6 +54,7 @@ export class MenuComponent extends BaseComponent {
                 this.initializeMenu();
                 dialog.removeFrom(parent);
             });
+            this.renewSections(parent);
             dialog.setOnSubmitListener(() => {
                 container.style.overflow = 'auto';
                 if (!this.checkSectionDuplicated(menu)) {
@@ -91,11 +92,22 @@ export class MenuComponent extends BaseComponent {
         this.updateChildren();
     }
     checkSectionDuplicated(id) {
-        const checked = this.pageSectionComponents.find(section => {
-            if (section.id === id) {
-                return true;
-            }
-        });
+        const checked = this.pageSectionComponents.find(section => section.id === id);
         return checked !== undefined ? true : false;
+    }
+    renewSections(parent) {
+        let filtered = [];
+        if (!parent.children) {
+            return new Error(`${parent} element doesn't have children`);
+        }
+        const children = parent.children;
+        for (let section of children) {
+            let foundSection = this.pageSectionComponents.find(item => item.id === section.id);
+            if (!foundSection) {
+                return;
+            }
+            filtered.push(foundSection);
+        }
+        this.pageSectionComponents = filtered;
     }
 }
