@@ -166,7 +166,7 @@ export class MenuComponent extends BaseComponent<HTMLElement> implements MenuAdd
         return checked !== undefined ? true : false;
     }
 
-    public renewSections(parent: HTMLElement) {              
+    private renewSections(parent: HTMLElement) {              
         let filtered: PageSectionComponent[] = [];        
         
         if(!parent.children) {

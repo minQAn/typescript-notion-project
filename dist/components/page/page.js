@@ -13,6 +13,47 @@ export class PageItemComponent extends BaseComponent {
         closeBtn.addEventListener('click', () => {
             this.onCloseListener && this.onCloseListener();
         });
+        this.element.addEventListener('dragstart', (event) => {
+            this.dragStart(event);
+        });
+        this.element.addEventListener('dragend', (event) => {
+            this.dragEnd(event);
+        });
+        this.element.addEventListener('dragenter', (event) => {
+            this.dragEnter(event);
+        });
+        this.element.addEventListener('dragleave', (event) => {
+            this.dragLeave(event);
+        });
+    }
+    dragStart(_) {
+        this.notifyDragObservers('start');
+    }
+    dragEnd(_) {
+        this.notifyDragObservers('stop');
+    }
+    dragEnter(_) {
+        this.notifyDragObservers('enter');
+    }
+    dragLeave(_) {
+        this.notifyDragObservers('leave');
+    }
+    notifyDragObservers(state) {
+        this.dragStateListener && this.dragStateListener(this, state);
+    }
+    setOnDragStateListener(listener) {
+        this.dragStateListener = listener;
+    }
+    muteChildren(state) {
+        if (state === 'mute') {
+            this.element.classList.add('mute-children');
+        }
+        else {
+            this.element.classList.remove('mute-children');
+        }
+    }
+    getBoundingRect() {
+        return this.element.getBoundingClientRect();
     }
     setOnCloseListener(listener) {
         this.onCloseListener = listener;
@@ -27,18 +68,67 @@ export class PageItemBoxComponent extends BaseComponent {
         super(`<ul></ul>`);
         this.menu = menu;
         this.pageItemContainer = pageItemContainer;
+        this.children = new Set();
         this.element.classList.add(`${this.menu}__box`);
+        this.element.addEventListener('dragover', (event) => {
+            this.onDragOver(event);
+        });
+        this.element.addEventListener('drop', (event) => {
+            this.onDrop(event);
+        });
+    }
+    onDragOver(event) {
+        event.preventDefault();
+    }
+    onDrop(event) {
+        event.preventDefault();
+        if (!this.dropTarget) {
+            return;
+        }
+        if (this.dragTarget && this.dragTarget !== this.dropTarget) {
+            const dragTargetY = this.dragTarget.getBoundingRect().y;
+            const dropY = event.clientY;
+            this.dragTarget.removeFrom(this.element);
+            this.dropTarget.attach(this.dragTarget, dragTargetY < dropY ? 'afterend' : 'beforebegin');
+        }
     }
     addChild(section) {
         const pageItemComponent = new this.pageItemContainer();
         pageItemComponent.addChild(section);
         pageItemComponent.attachTo(this.element, 'beforeend');
+        this.children.add(pageItemComponent);
         pageItemComponent.setOnCloseListener(() => {
             var _a;
             pageItemComponent.removeFrom(this.element);
+            this.children.delete(pageItemComponent);
             if (this.element.childElementCount === 0 && ((_a = this.element.parentElement) === null || _a === void 0 ? void 0 : _a.id) === this.menu) {
                 this.element.parentElement.remove();
             }
+        });
+        pageItemComponent.setOnDragStateListener((target, state) => {
+            switch (state) {
+                case 'start':
+                    this.dragTarget = target;
+                    this.updateUlBox('mute');
+                    break;
+                case 'stop':
+                    this.updateUlBox('unmute');
+                    this.dragTarget = undefined;
+                    break;
+                case 'enter':
+                    this.dropTarget = target;
+                    break;
+                case 'leave':
+                    this.dropTarget = undefined;
+                    break;
+                default:
+                    return new Error(`unsupported state: ${state}`);
+            }
+        });
+    }
+    updateUlBox(state) {
+        this.children.forEach((pageItem) => {
+            pageItem.muteChildren(state);
         });
     }
 }

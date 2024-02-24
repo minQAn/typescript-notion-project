@@ -332,3 +332,9 @@ body {
   padding: 0.4rem;
   outline: none;
 }
+
+/* --- Drag and Drop --- */
+/* prevent bubbling for all children elements */
+.mute-children * {
+  pointer-events: none;
+}
