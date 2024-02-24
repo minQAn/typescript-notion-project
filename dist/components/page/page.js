@@ -89,6 +89,7 @@ export class PageItemBoxComponent extends BaseComponent {
     }
     onDrop(event) {
         event.preventDefault();
+        console.log('dropTarget: ', this.dropTarget);
         if (!this.dropTarget) {
             return;
         }
@@ -117,11 +118,11 @@ export class PageItemBoxComponent extends BaseComponent {
             switch (state) {
                 case 'start':
                     this.dragTarget = target;
-                    this.updateUlBox('mute');
+                    this.updatePageItems('mute');
                     break;
                 case 'stop':
-                    this.updateUlBox('unmute');
                     this.dragTarget = undefined;
+                    this.updatePageItems('unmute');
                     break;
                 case 'enter':
                     this.dropTarget = target;
@@ -134,7 +135,7 @@ export class PageItemBoxComponent extends BaseComponent {
             }
         });
     }
-    updateUlBox(state) {
+    updatePageItems(state) {
         this.children.forEach((pageItem) => {
             pageItem.muteChildren(state);
         });

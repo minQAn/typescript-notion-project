@@ -134,13 +134,16 @@ export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implem
 
     onDrop(event: DragEvent) {
         event.preventDefault();
+        console.log('dropTarget: ', this.dropTarget);
         if(!this.dropTarget) {
             return;
-        }
+        }        
         if(this.dragTarget && this.dragTarget !== this.dropTarget) {
             const dragTargetY = this.dragTarget.getBoundingRect().y;
             const dropY = event.clientY; 
             this.dragTarget.removeFrom(this.element);  
+            // console.log('dropY:', dropY);
+            // console.log('dragTargetY:', dragTargetY);
             this.dropTarget.attach(this.dragTarget, dragTargetY < dropY ? 'afterend' : 'beforebegin');            
         }
 
@@ -169,17 +172,17 @@ export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implem
             switch(state) {
                 case 'start':
                     this.dragTarget = target;
-                    this.updateUlBox('mute');
+                    this.updatePageItems('mute');
                     break;
                 case 'stop':
-                    this.updateUlBox('unmute');
                     this.dragTarget = undefined;
+                    this.updatePageItems('unmute');
                     break;
-                case 'enter':
+                case 'enter':                   
                     this.dropTarget = target;
                     break;
                 case 'leave':
-                    this.dropTarget = undefined
+                    this.dropTarget = undefined;                    
                     break;
                 default:
                     return new Error(`unsupported state: ${state}`);
@@ -187,7 +190,7 @@ export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implem
         });    
     }
 
-    private updateUlBox(state: 'mute' | 'unmute') {
+    private updatePageItems(state: 'mute' | 'unmute') {
         this.children.forEach((pageItem: PageItemContainer) => {
             pageItem.muteChildren(state);
         });
