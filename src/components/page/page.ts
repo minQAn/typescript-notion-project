@@ -19,6 +19,7 @@ interface PageItemContainer extends Component, Composable {
     setOnDragStateListener(listener: OnDragStateListener<PageItemContainer>): void;
     muteChildren(state: 'mute' | 'unmute'): void;
     getBoundingRect(): DOMRect;
+    onDropped(): void;
 }
 
 // should be dragable to PageItemSectionComponent
@@ -57,15 +58,19 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
 
     dragStart(_: DragEvent) {
         this.notifyDragObservers('start');
+        this.element.classList.add('drag-started');
     }
     dragEnd(_: DragEvent) {
         this.notifyDragObservers('stop');
+        this.element.classList.remove('drag-started');
     }
     dragEnter(_: DragEvent) {
         this.notifyDragObservers('enter');
+        this.element.classList.add('drop-area');
     }
     dragLeave(_: DragEvent) {
         this.notifyDragObservers('leave');
+        this.element.classList.remove('drop-area'); // drop이되면 leave가 발생하지 않고 있음
     }
 
     notifyDragObservers(state: DragState) {
@@ -86,6 +91,10 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
 
     getBoundingRect(): DOMRect {
         return this.element.getBoundingClientRect();
+    }
+
+    onDropped() {
+        this.element.classList.remove('drop-area');
     }
 
     setOnCloseListener(listener: OnCloseListener) {
@@ -131,11 +140,11 @@ export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implem
         if(this.dragTarget && this.dragTarget !== this.dropTarget) {
             const dragTargetY = this.dragTarget.getBoundingRect().y;
             const dropY = event.clientY; 
-
             this.dragTarget.removeFrom(this.element);  
-            this.dropTarget.attach(this.dragTarget, dragTargetY < dropY ? 'afterend' : 'beforebegin');
-            
+            this.dropTarget.attach(this.dragTarget, dragTargetY < dropY ? 'afterend' : 'beforebegin');            
         }
+
+        this.dropTarget.onDropped(); // drop이 발생하면 leave가 발생하지 않아 이곳에서 처리
     }
 
     

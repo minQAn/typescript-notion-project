@@ -28,15 +28,19 @@ export class PageItemComponent extends BaseComponent {
     }
     dragStart(_) {
         this.notifyDragObservers('start');
+        this.element.classList.add('drag-started');
     }
     dragEnd(_) {
         this.notifyDragObservers('stop');
+        this.element.classList.remove('drag-started');
     }
     dragEnter(_) {
         this.notifyDragObservers('enter');
+        this.element.classList.add('drop-area');
     }
     dragLeave(_) {
         this.notifyDragObservers('leave');
+        this.element.classList.remove('drop-area');
     }
     notifyDragObservers(state) {
         this.dragStateListener && this.dragStateListener(this, state);
@@ -54,6 +58,9 @@ export class PageItemComponent extends BaseComponent {
     }
     getBoundingRect() {
         return this.element.getBoundingClientRect();
+    }
+    onDropped() {
+        this.element.classList.remove('drop-area');
     }
     setOnCloseListener(listener) {
         this.onCloseListener = listener;
@@ -91,6 +98,7 @@ export class PageItemBoxComponent extends BaseComponent {
             this.dragTarget.removeFrom(this.element);
             this.dropTarget.attach(this.dragTarget, dragTargetY < dropY ? 'afterend' : 'beforebegin');
         }
+        this.dropTarget.onDropped();
     }
     addChild(section) {
         const pageItemComponent = new this.pageItemContainer();
