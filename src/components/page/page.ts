@@ -107,8 +107,6 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
     }
 }
 
-// TODO: Drop 재사용성을 위해 section과 ul<droppable>컴포넌트 분할을 해야함
-
 // should be draggable to PageComponent & dropable from PageItemComponent
 export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implements Composable {    
     private children = new Set<PageItemContainer>();
@@ -167,7 +165,7 @@ export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implem
             }             
         });
 
-        // TODO from there.. 드래그 이벤트 구현 시작.. 
+        // Drag events  
         pageItemComponent.setOnDragStateListener((target: PageItemContainer, state: DragState) => {
             switch(state) {
                 case 'start':
