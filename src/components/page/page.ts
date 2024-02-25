@@ -107,7 +107,7 @@ export class PageItemComponent extends BaseComponent<HTMLElement> implements Pag
     }
 }
 
-// TODO: 02/11 Drop 재사용성을 위해 section과 ul<droppable>컴포넌트 분할을 해야함
+// TODO: Drop 재사용성을 위해 section과 ul<droppable>컴포넌트 분할을 해야함
 
 // should be draggable to PageComponent & dropable from PageItemComponent
 export class PageItemBoxComponent extends BaseComponent<HTMLUListElement> implements Composable {    

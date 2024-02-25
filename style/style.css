@@ -38,7 +38,7 @@ body {
 /* -- Menu-left -- */
 .menu {
   flex: 1 1 20%;  
-  border-right: 1px solid var(--text-secondary-color);
+  /* border-right: 1px solid var(--text-secondary-color); */
   height: 100vh;
   position: sticky;
   left: 0;
@@ -354,4 +354,83 @@ body {
 
 .drop-area {
   border: 3px solid var(--accent-color);
+}
+
+/* Resposible */
+
+@media only screen and (max-width: 768px) {
+  /* app */
+  .app {
+    flex-direction: column;
+  }
+
+  body {
+    min-height: 100vh;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .menu {
+    background-color: var(--bg-accent-color);
+    z-index: 1;
+  }
+
+  .menu .menu__title {
+    padding: 1rem;
+    margin: 0;
+  }
+
+  .menu .control-panel {
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;    
+  }
+
+  .menu .control-panel li .create-button {
+    width: 100%;
+    font-size: 0.9rem;
+  }
+
+  /* page */
+  .page {
+    flex-direction: column;        
+    padding: 1rem;
+    position: initial;
+    height: auto;
+  }
+
+  .page-section {  
+    flex: 0;
+    width: 100%;        
+    margin-bottom: 1.2rem;
+  }
+  
+  /* except the last element */
+  .page-section:not(:last-of-type) { 
+    margin-right: 0;    
+  } 
+  
+  /* when the page section exists only one */
+  .page-section:only-of-type {
+    flex: 0;
+  }
+
+  .dialog {
+      position: fixed;  /* relative to page class to be placed to the right */
+      top: 121.5px;
+      align-items: flex-start;
+  }  
+  .dialog__container {
+    display: flex;
+    flex-direction: column;  
+    background-color: var(--accent-color);
+    width: 25rem;
+    border-radius: 10px;
+    padding: 1em;
+  }
+
+
+
+  
+  
 }
